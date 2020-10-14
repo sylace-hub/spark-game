@@ -1,0 +1,130 @@
+#
+# SPARK SHELL : HBASE > DATAFRAME > TABLE SPARK SQL
+##
+
+HBase :
+--------
+
+- Création du jeu de données pour le TP :
+
+hbase(main):002:0> create 'Contacts', 'Personal', 'Office'
+
+hbase(main):002:0> put 'Contacts', '1000', 'Personal:Name', 'John Dole'
+hbase(main):002:0> put 'Contacts', '1000', 'Personal:Phone', '1-425-000-0001'
+hbase(main):002:0> put 'Contacts', '1000', 'Office:Phone', '1-425-000-0002'
+hbase(main):002:0> put 'Contacts', '1000', 'Office:Address', '1111 San Gabriel Dr.'
+hbase(main):002:0> put 'Contacts', '8396', 'Personal:Name', 'Calvin Raji'
+hbase(main):002:0> put 'Contacts', '8396', 'Personal:Phone', '230-555-0191'
+hbase(main):002:0> put 'Contacts', '8396', 'Office:Phone', '230-555-0191'
+hbase(main):002:0> put 'Contacts', '8396', 'Office:Address', '5415 San Gabriel Dr.'
+
+hbase(main):002:0> get 'Contacts','1000'
+COLUMN                                         CELL                                                                                                                                  
+ Office:Address                                timestamp=1602088507247, value=1111 San Gabriel Dr.                                                                                   
+ Office:Phone                                  timestamp=1602088507206, value=1-425-000-0002                                                                                         
+ Personal:Name                                 timestamp=1602088507151, value=John Dole                                                                                              
+ Personal:Phone                                timestamp=1602088507175, value=1-425-000-0001                                                                                         
+1 row(s)
+
+
+Spark Shell :
+--------------
+
+> sudo spark-shell --jars="/usr/lib/hbase/*.jar"
+
+import org.apache.hadoop.hbase.{HBaseConfiguration, TableName}
+import org.apache.hadoop.fs.Path
+import org.apache.hadoop.hbase.client.{ConnectionFactory, Get, Result, Scan, Table}
+import org.apache.hadoop.hbase.util.Bytes
+import scala.collection.mutable.ListBuffer
+
+case class Contact(personalName: String, personalPhone: String, officePhone: String, officeAddress: String)
+
+def toContact(result: Result): Contact = {
+	val personalName = result.getValue(Bytes.toBytes("Personal"), Bytes.toBytes("Name"))
+	val personalPhone = result.getValue(Bytes.toBytes("Personal"), Bytes.toBytes("Phone"))
+	val officePhone = result.getValue(Bytes.toBytes("Office"), Bytes.toBytes("Phone"))
+	val officeAddress = result.getValue(Bytes.toBytes("Office"), Bytes.toBytes("Address"))
+
+	Contact(Bytes.toString(personalName), Bytes.toString(personalPhone), Bytes.toString(officePhone), Bytes.toString(officeAddress))
+}
+
+def getElement(table: Table, key: String) : Contact = {
+	val get = new Get(Bytes.toBytes(key));
+	val result = table.get(get)
+	toContact(result)
+}
+
+def getAll(table: Table) : ListBuffer[Contact] = {
+	var contacts = ListBuffer[Contact]()
+
+	// Instantiating the Scan class + Getting the scan result
+	val scan = new Scan()
+	val scanner = table.getScanner(scan)
+
+	var result = scanner.next
+	while ( {
+	  result != null
+	}) {
+	  contacts += toContact(result)
+	  result = scanner.next
+	}
+
+	scanner.close()
+	contacts
+}
+
+// Main instructions
+val confH = HBaseConfiguration.create()
+confH.addResource(new Path("/etc/hadoop/conf.empty/core-site.xml"))
+confH.addResource(new Path("/etc/hbase/conf.dist/hbase-site.xml"))
+
+val connection = ConnectionFactory.createConnection(confH)
+
+val table = connection.getTable(TableName.valueOf(Bytes.toBytes("Contacts")))
+
+val contact = getElement(table, "1000")
+println(contact)
+
+val contacts = getAll(table)
+println(contacts)
+
+val df = contacts.toDF()
+
+df.show()
+df.printSchema()
+
+# df.createOrReplaceTempView("contacts")
+# spark.sql("select * from contacts where personalName = 'John Dole'").show()
+
+df.write.option("path", "/tmp/contacts").saveAsTable("contacts")
+spark.sql("SELECT * FROM contacts WHERE personalName = 'John Dole'").show()
+
+
+Jupyter :
+----------
+
+WARN : Ca ne marche pas, problème de librairies.
+
+df = sqlContext.read.format('org.apache.hadoop.hbase.spark') \
+    .option('hbase.table','books') \
+    .option('hbase.columns.mapping', \
+            'id STRING :key, \
+            name STRING Personal:Name, \
+            personalPhone STRING Personal:Phone, \
+            officePhone STRING Office:Phone, \
+            officeAddress STRING Office:Address') \
+	.option('hbase.use.hbase.context', False) \
+    .option('hbase.config.resources', 'file:///etc/hbase/conf/hbase-site.xml') \
+    .option('hbase-push.down.column.filter', False) \
+    .load()
+
+
+Restart :
+----------
+
+sudo systemctl stop hadoop-yarn-resourcemanager
+sudo systemctl stop spark-history-server
+
+sudo systemctl start hadoop-yarn-resourcemanager
+sudo systemctl start spark-history-server

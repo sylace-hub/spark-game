@@ -1,0 +1,146 @@
+#
+# SPARK SHELL : TABLE SPARK SQL > DATAFRAME > POSTGRES
+##
+
+Postgres :
+-----------
+
+Installation :
+
+> wget https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-3.noarch.rpm
+> sudo yum install pgdg-centos96-9.6-3.noarch.rpm epel-release
+> sudo yum update
+> sudo yum install postgresql96-server postgresql96-contrib
+> sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
+> sudo systemctl start postgresql-9.6
+
+
+CREATE DATABASE tp
+\c tasks
+
+
+Remote Access :
+----------------
+
+- Allows ousr address ips to access to the postgres server :
+https://stackoverflow.com/questions/3278379/how-to-configure-postgresql-to-accept-all-incoming-connections
+
+> sudo nano /mnt/var/lib/pgsql/data/pg_hba.conf
+host  all             all             0.0.0.0/0         password
+
+
+> sudo systemctl restart postgresql
+> psql -U postgres -h 52.47.183.37 -p 5432 tasks
+
+
+
++ Create dataset :
+
+CREATE TABLE IF NOT EXISTS cafe (
+  id SERIAL PRIMARY KEY,        -- AUTO_INCREMENT integer, as primary key
+  category VARCHAR(20) NOT NULL,   -- Use the enum type defined earlier
+  name VARCHAR(50) NOT NULL,    -- Variable-length string of up to 50 characters
+  price NUMERIC(5,2) NOT NULL,  -- 5 digits total, with 2 decimal places
+  last_update DATE              -- 'YYYY-MM-DD'
+);
+
+INSERT INTO cafe (category, name, price) VALUES
+  ('coffee', 'Espresso', 3.19),
+  ('coffee', 'Cappuccino', 3.29),
+  ('coffee', 'Caffe Latte', 3.39),
+  ('coffee', 'Caffe Mocha', 3.49),
+  ('coffee', 'Brewed Coffee', 3.59),
+  ('tea', 'Green Tea', 2.99),
+  ('tea', 'Wulong Tea', 2.89);
+
+Pour lister les tables :
+
+\dt
+
+
+
+1. READ FROM POSTGRES with Spark Shell :
+-----------------------------------------
+
+> sudo yum install postgresql-jdbc
+
+# sudo cp /usr/share/java/postgresql-jdbc.jar /usr/lib/spark/jars/
+
+> sudo spark-shell --driver-class-path /usr/share/java/postgresql-jdbc.jar --jars /usr/share/java/postgresql-jdbc.jar
+
+val database = "tp"
+val url = "jdbc:postgresql://52.47.183.37/" + database
+
+import java.util.Properties
+val connectionProperties = new Properties()
+connectionProperties.setProperty("user", "postgres")
+connectionProperties.setProperty("password", "password")
+
+val query ="(select * from cafe) as cafe"
+
+val cafeDf = spark.read.jdbc(url, query, connectionProperties)
+cafeDf.show()
+
+
+2. WRITE INTO POSTGRES with Spark Shell :
+-----------------------------------------
+
+val database = "tp"
+val url = "jdbc:postgresql://52.47.183.37/" + database
+
+val contactsDF = spark.sql("SELECT * FROM contacts")
+contactsDF.show()
+
+contactsDF.write
+	.format("jdbc")
+	.option("url", url)
+	.option("dbtable", "contacts")
+	.option("user", "postgres")
+	.option("password", "password")
+	.save()
+
+
+> psql -U postgres -h 52.47.183.37 -p 5432 tasks
+Password for user postgres: 
+psql (9.2.24)
+Type "help" for help.
+
+tasks=# drop table contacts;
+DROP TABLE
+tasks=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner   
+--------+----------+-------+----------
+ public | cafe     | table | postgres
+ public | contacts | table | postgres
+(2 rows)
+
+tasks=# select * from contacts;
+ personalName | personalPhone  |  officePhone   |    officeAddress     
+--------------+----------------+----------------+----------------------
+ John Dole    | 1-425-000-0001 | 1-425-000-0002 | 1111 San Gabriel Dr.
+ Calvin Raji  | 230-555-0191   | 230-555-0191   | 5415 San Gabriel Dr.
+(2 rows)
+
+
+
+Jupyter :
+----------
+
+WARN : Pour que ça marche il faut copier le jar du driver Postgres dans le dossier jars de Spark et relancer le serveur livy.
+-> C'est pas très propre.
+
+https://stackoverflow.com/questions/49011012/cant-connect-to-mysql-database-from-pyspark-getting-jdbc-error
+
+> sudo yum install postgresql-jdbc
+> sudo cp /usr/share/java/postgresql-jdbc.jar /usr/lib/spark/jars/
+
+> sudo systemctl restart livy-server.service
+
+
+WARN : Cette solution est plus propre mais ne marche pas.
+
+# import os
+# os.environ['PYSPARK_SUBMIT_ARGS'] = '--jars file:///tmp/postgresql-9.4.1207.jre6.jar pyspark-shell'
+# os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages org.postgresql:postgresql:9.2.1002-8.amzn2 pyspark-shell'
+
