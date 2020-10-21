@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$#" -le 1 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Error : missing avatar name in the command line as a unique argument."
     exit 0
 fi
