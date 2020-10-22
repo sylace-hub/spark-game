@@ -7,7 +7,7 @@ Postgres :
 
 Installation :
 
-> wget https://download.postgresql.org/pub/repos/yum/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-3.noarch.rpm
+> wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 > sudo yum install pgdg-centos96-9.6-3.noarch.rpm epel-release
 > sudo yum update
 > sudo yum install postgresql96-server postgresql96-contrib
