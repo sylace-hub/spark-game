@@ -1,0 +1,20 @@
+Movie Lens :
+-------------
+
+(1 mo)
+wget http://files.grouplens.org/datasets/movielens/ml-latest-small.zip
+
+(265 mo)
+wget http://files.grouplens.org/datasets/movielens/ml-latest.zip
+
+(6 mo)
+wget http://files.grouplens.org/datasets/movielens/ml-1m.zip
+
+> hdfs dfs -mkdir /user/root/movielens
+> hdfs dfs -put *.data /user/root/movielens
+> hdfs dfs -ls /user/root/movielens
+
+
++ On Jupyter :
+
+"Mllib Movie Lens (Big dataset).ipynb"

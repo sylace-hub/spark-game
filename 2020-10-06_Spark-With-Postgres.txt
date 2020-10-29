@@ -7,6 +7,8 @@ Postgres :
 
 Installation :
 
+https://techviewleo.com/install-postgresql-12-on-amazon-linux/
+
 > wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 > sudo yum install pgdg-centos96-9.6-3.noarch.rpm epel-release
 > sudo yum update
@@ -15,8 +17,8 @@ Installation :
 > sudo systemctl start postgresql-9.6
 
 
-CREATE DATABASE tp
-\c tasks
+CREATE DATABASE tasks;
+\c tasks;
 
 
 Remote Access :
@@ -37,11 +39,11 @@ host  all             all             0.0.0.0/0         password
 + Create dataset :
 
 CREATE TABLE IF NOT EXISTS cafe (
-  id SERIAL PRIMARY KEY,        -- AUTO_INCREMENT integer, as primary key
+  id SERIAL PRIMARY KEY,           -- AUTO_INCREMENT integer, as primary key
   category VARCHAR(20) NOT NULL,   -- Use the enum type defined earlier
-  name VARCHAR(50) NOT NULL,    -- Variable-length string of up to 50 characters
-  price NUMERIC(5,2) NOT NULL,  -- 5 digits total, with 2 decimal places
-  last_update DATE              -- 'YYYY-MM-DD'
+  name VARCHAR(50) NOT NULL,       -- Variable-length string of up to 50 characters
+  price NUMERIC(5,2) NOT NULL,     -- 5 digits total, with 2 decimal places
+  last_update DATE                 -- 'YYYY-MM-DD'
 );
 
 INSERT INTO cafe (category, name, price) VALUES
