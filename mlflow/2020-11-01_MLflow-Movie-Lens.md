@@ -8,7 +8,7 @@ pip3 install mlflow
 
 #### Viewing the Tracking UI 
 ```
-mlflow ui&
+mlflow ui --host 0.0.0.0&
 ```
 go to http://localhost:5000 :
 
