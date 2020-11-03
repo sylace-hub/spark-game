@@ -5,12 +5,16 @@
 ```
 pip3 install mlflow
 ```
-
+```
+chmod 777 /root/mlruns
+```
 #### Viewing the Tracking UI 
+
 ```
-mlflow ui&
+mlflow ui --host 0.0.0.0&
 ```
-go to http://localhost:5000 :
+
+go to http://YOUR.IP.ADD.RESS:5000 :
 
 #### Run MLflow projects :
 
