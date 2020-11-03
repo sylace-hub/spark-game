@@ -8,7 +8,7 @@ pip3 install mlflow
 
 #### Viewing the Tracking UI 
 ```
-mlflow ui --host 0.0.0.0&
+mlflow ui&
 ```
 go to http://localhost:5000 :
 
@@ -62,12 +62,15 @@ mlflow models serve -m runs:/7de69dabe1254ed09e681b33143ba05e/model --port 1234 
 Once you have started the server, you can pass it some sample data and see the predictions.
 
 The following example uses curl to send a JSON-serialized pandas DataFrame with the split orientation to the model server.
+```
 curl -d '{"columns":["x"], "data":[[1], [-1]]}' -H 'Content-Type: application/json; format=pandas-split' -X POST localhost:5000/invocations
+```
 
 In our example :
 The rest service takes pandas-split format based on json, to get a file with this format we create it in the python script mlflow/create-json-pandas-data.py :
+```python
 	serveDf.toPandas().head(100).to_json('~/data.json', orient='split')
-
+```
 
 ```
 curl --request POST http://localhost:1234/recommendForAllUsers --header "Content-Type:application/json; format=pandas-split" --data "~/data.json"
