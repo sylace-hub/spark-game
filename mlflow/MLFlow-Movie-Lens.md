@@ -66,7 +66,7 @@ total 12
 You can pass the run ID and the path of the model within the artifacts directory (here “model”) to various tools. For example, MLflow includes a simple REST server for python-based models:
 
 ```
-mlflow models serve -m runs:/7de69dabe1254ed09e681b33143ba05e/model --port 1234 --no-conda
+mlflow models serve -m /mlruns/0/6c8050941d0744b8ac3652ff22d40983/artifacts/ALSmodel_Lite2 --port 9999 --no-conda
 ```
 
 Once you have started the server, you can pass it some sample data and see the predictions.
