@@ -14,19 +14,23 @@ go to http://localhost:5000 :
 
 #### Run MLflow projects :
 
-MLflow allows you to package code and its dependencies as a project that can be run in a reproducible fashion on other data. Each project includes its code and a MLproject file that defines its dependencies.
+MLflow allows you to package code and its dependencies as a project that can be run in a reproducible fashion on other data.   
+Each project includes its code and a MLproject file that defines its dependencies.
 
 ```
 mlflow run sklearn_elasticnet_wine -P alpha=0.5
 mlflow run https://github.com/mlflow/mlflow-example.git -P alpha=5.0
 ```
 
-By default MLflow run installs all dependencies using conda. To run a project without using conda, you can provide the --no-conda option to mlflow run. In this case, you must ensure that the necessary dependencies are already installed in your Python environment.
+By default MLflow run installs all dependencies using conda.   
+To run a project without using conda, you can provide the --no-conda option to mlflow run.   
+In this case, you must ensure that the necessary dependencies are already installed in your Python environment.
 
 
 ## Saving Models :
 
-MLflow includes a generic MLmodel format for saving models from a variety of tools. Many models can be served as Python functions, so an MLmodel file can declare how each model should be interpreted as a Python function in order to let various tools serve it.
+MLflow includes a generic MLmodel format for saving models from a variety of tools.  
+Many models can be served as Python functions, so an MLmodel file can declare how each model should be interpreted as a Python function in order to let various tools serve it.
 ```
     mlflow.log_metric("rmse", rmse)
     mlflow.spark.log_model(lr, "model")
@@ -68,7 +72,8 @@ curl -d '{"columns":["x"], "data":[[1], [-1]]}' -H 'Content-Type: application/js
 
 In our example :
 The rest service takes pandas-split format based on json, to get a file with this format we create it in the python script mlflow/create-json-pandas-data.py :
-```python
+```
+# python
 	serveDf.toPandas().head(100).to_json('~/data.json', orient='split')
 ```
 
