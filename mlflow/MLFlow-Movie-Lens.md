@@ -7,7 +7,8 @@ pip3 install mlflow
 ```
 ```
 mkdir /mlruns
-chmod 777 /mlruns
+cp -r /root/mlruns/* /mlruns
+chmod -R 777 /mlruns
 ```
 #### Viewing the Tracking UI 
 
