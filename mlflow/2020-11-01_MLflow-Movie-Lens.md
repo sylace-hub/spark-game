@@ -2,14 +2,15 @@
 
 1. Install MLFlow :
 
-> pip3 install mlflow
+```
+pip3 install mlflow
+```
 
-> mlflow ui
-
-2. Viewing the Tracking UI at http://localhost:5000 :
-
-> mlflow ui
-
+2. Viewing the Tracking UI 
+```
+mlflow ui
+```
+go to http://localhost:5000 :
 
 3. Run MLflow projects :
 
