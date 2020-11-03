@@ -67,7 +67,7 @@ Once you have started the server, you can pass it some sample data and see the p
 
 The following example uses curl to send a JSON-serialized pandas DataFrame with the split orientation to the model server.
 ```
-curl -d '{"columns":["x"], "data":[[1], [-1]]}' -H 'Content-Type: application/json; format=pandas-split' -X POST localhost:5000/invocations
+curl -d '{"columns":["x"], "data":[[1], [-1]]}' -H 'Content-Type: application/json; format=pandas-split' -X POST localhost:1234/invocations
 ```
 
 In our example :
@@ -78,7 +78,7 @@ The rest service takes pandas-split format based on json, to get a file with thi
 ```
 
 ```
-curl --request POST http://localhost:1234/recommendForAllUsers --header "Content-Type:application/json; format=pandas-split" --data "~/data.json"
+curl --request POST http://localhost:1234/invocations --header "Content-Type:application/json; format=pandas-split" --data "~/data.json"
 ```
 
 Predictions we get as a response :
