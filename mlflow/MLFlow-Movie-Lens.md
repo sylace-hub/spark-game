@@ -80,7 +80,8 @@ In our example :
 The rest service takes pandas-split format based on json, to get a file with this format we create it in the python script mlflow/create-json-pandas-data.py :
 ```
 # python
-	serveDf.toPandas().head(100).to_json('~/data.json', orient='split')
+	
+serveDf.toPandas().head(100).to_json('~/data.json', orient='split')
 ```
 
 ```
