@@ -84,7 +84,7 @@ The rest service takes pandas-split format based on json, to get a file with thi
 ```
 
 ```
-curl --request POST http://localhost:1234/invocations --header "Content-Type:application/json; format=pandas-split" --data "~/data.json"
+curl -X POST http://localhost:1234/invocations -H 'Content-Type:application/json; format=pandas-split' --data @data.json
 ```
 
 Predictions we get as a response :
