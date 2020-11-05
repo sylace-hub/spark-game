@@ -9,10 +9,10 @@ aws rds create-db-instance \
     --engine postgres \
     --db-instance-class db.t2.micro \
     --master-username postgres \
-    --master-user-password secret99 \
+    --master-user-password password2020 \
     --allocated-storage 20 \
     --db-subnet-group-name rds-db-subnet-group \
-    --vpc-security-group-ids sg-0ab1bf11cbfb39975 \
+    --vpc-security-group-ids sg-015f242538ba9960c \
     --publicly-accessible \
     --port 5432 \
     --db-name sample
@@ -22,6 +22,7 @@ Check the instances and get the host to get connected to :
 
 ```console
 aws rds describe-db-instances --db-instance-identifier rds-postgres-03 | grep "Address"
+                "Address": "rds-postgres-03.cmiwkjhmp07r.us-east-2.rds.amazonaws.com",
 ```
 
 Try to connect :
