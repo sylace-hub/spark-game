@@ -49,6 +49,7 @@ INSERT INTO cafe (category, name, price) VALUES
   ('coffee', 'Brewed Coffee', 3.59),
   ('tea', 'Green Tea', 2.99),
   ('tea', 'Wulong Tea', 2.89);
+```
 
 To list  the tables in the current database :
 ```sql
@@ -60,6 +61,7 @@ To access database from Spark :
 ```console
 > sudo yum install postgresql-jdbc
 > sudo spark-shell --driver-class-path /usr/share/java/postgresql-jdbc.jar --jars /usr/share/java/postgresql-jdbc.jar
+```
 
 ```scala
 val database = "sample"
