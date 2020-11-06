@@ -46,14 +46,14 @@ $ curl -H "Accept: text/csv; -Type: application/json" -X POST http://localhost:5
 
 The format is a series of lines (ending with the newline separator) with movie_id and rating separated by commas. For example, the following file corresponds to the ten new user ratings used as a example in the tutorial about building the model:
 ```csv
-260,9  
-1,8  
-16,7  
-25,8  
-32,9  
-335,4  
-379,3  
-296,7  
-858,10  
-50,8  
+260,4.6  
+1,4
+16,3.5  
+25,4  
+32,5 
+335,4
+379,3
+296,1
+858,1
+50,2.3
 ```
