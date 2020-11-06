@@ -31,7 +31,7 @@ s3aDf = spark.read.csv("s3a://transtat/data/BOTS_2019_01.csv")
 s3aDf.show(10)
 ```
 
-### Scala on Spark-shell:
+### Spark-shell (Scala) :
 
 ```console
 sudo spark-shell --packages org.apache.hadoop:hadoop-aws:2.7.7
