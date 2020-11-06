@@ -1,11 +1,11 @@
 
 ### Spark SQL Analytics
 
-- For this workshop, you can use the provided Bureau of Transporation Dataset
+- For this workshop, you can use the provided Bureau of Transportation Dataset
 
 - Reminder : 
 
-By now, you should have Downloade the DataSets from S3 & stored them with a proper schema as Parquet files :
+By now, you should have Downloaded the DataSets from S3 & stored them with a proper schema as Parquet files :
 
 /user/root/data/BOTS/PARQUET
 
