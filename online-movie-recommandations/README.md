@@ -41,7 +41,7 @@ $ curl -H "Content-Type: application/json" -X GET http://localhost:5432/12/ratin
 Add new ratings for a specific user and recompute the prediction model for every new batch of user ratings.
 Here we call the service for the user 331 :
 ```console
-$ curl -H "Accept: text/csv; -Type: application/json" -X POST http://localhost:5432/331/ratings -F 'file=@ml-latest/new-ratings.csv'
+$ curl -H "Accept: text/csv; Content-Type: application/json" -X POST http://localhost:5432/331/ratings -F 'file=@ml-latest/new-ratings.csv'
 ```
 
 The format is a series of lines (ending with the newline separator) with movie_id and rating separated by commas. For example, the following file corresponds to the ten new user ratings used as a example in the tutorial about building the model:
