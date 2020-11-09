@@ -33,8 +33,8 @@ hdfs dfs -put ml-latest /user/root/ml-latest
 
 **Our complete web service contains three Python files:**
 * ***engine.py*** defines the recommendation engine, wrapping inside all the Spark related computations.
-* ***app.py*** is a Flask web application that defines a RESTful-like API around the engine.
-* ***server.py*** initialises a CherryPy webserver after creating a Spark context and Flask web app using the previous.
+* ***app.py*** is a Flask web application that defines a RESTful API around the engine.
+* ***server.py*** initialises a CherryPy webserver after creating a Spark context and Flask web app.
 
 To run the server :
 ```console
