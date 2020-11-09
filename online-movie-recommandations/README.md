@@ -16,6 +16,10 @@ Flask is a micro web framework written in Python.
 pip3 install Flask
 ```
 
+```console
+pip3 install pandas
+```
+
 findspark adds pyspark to sys.path at runtime
 ```console
 pip3 install findspark
