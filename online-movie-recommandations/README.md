@@ -2,6 +2,10 @@
 
 #### Prereqs :
 
+```console
+sudo su
+```
+
 The CherryPy framework features a reliable, HTTP/1.1-compliant, WSGI thread-pooled webserver.
 ```console
 pip3 install CherryPy
@@ -15,6 +19,11 @@ pip3 install Flask
 findspark adds pyspark to sys.path at runtime
 ```console
 pip3 install findspark
+```
+
+load provided data into hdfs 
+```console
+hdfs dfs -put ml-latest /user/root/ml-latest
 ```
 
 **Our complete web service contains three Python files:**
