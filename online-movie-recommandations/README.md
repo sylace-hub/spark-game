@@ -1,4 +1,6 @@
-# On-line recommendation service.
+# Online recommendation service Using Pyspark & MLlib
+
+# Prereqs :
 
 The CherryPy framework features a reliable, HTTP/1.1-compliant, WSGI thread-pooled webserver.
 ```console
@@ -10,6 +12,7 @@ Flask is a micro web framework written in Python.
 pip3 install Flask
 ```
 
+findspark adds pyspark to sys.path at runtime
 ```console
 pip3 install findspark
 ```
