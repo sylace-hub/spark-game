@@ -10,6 +10,10 @@ Flask is a micro web framework written in Python.
 pip3 install Flask
 ```
 
+```console
+pip3 install findspark
+```
+
 **Our complete web service contains three Python files:**
 * engine.py defines the recommendation engine, wrapping inside all the Spark related computations.
 * app.py is a Flask web application that defines a RESTful-like API around the engine.
