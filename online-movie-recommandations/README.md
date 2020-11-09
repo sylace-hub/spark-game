@@ -16,6 +16,7 @@ Flask is a micro web framework written in Python.
 pip3 install Flask
 ```
 
+pandas is a data manipulation and analysis library
 ```console
 pip3 install pandas
 ```
@@ -37,7 +38,7 @@ hdfs dfs -put ml-latest /user/root/ml-latest
 
 To run the server :
 ```console
-$ python server.py ml-latest/movies.csv ml-latest/ratings.csv
+$ spark-submit server.py ml-latest/movies.csv ml-latest/ratings.csv
 ```
 
 ## The application deploys three rest services :
