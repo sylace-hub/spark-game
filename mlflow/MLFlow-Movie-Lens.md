@@ -15,7 +15,7 @@ pip3 install mlflow
 ```
 mlflow ui --backend-store-uri /mlruns --host 0.0.0.0&
 
-Hit Ctrl-C to quit
+Hit Ctrl-C to clear out
 ```
 
 ```
