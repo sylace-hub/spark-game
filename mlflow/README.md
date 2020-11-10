@@ -75,15 +75,15 @@ go to http://YOUR.IP.ADD.RESS:5000 :
 (Locking might occur while logging your model and viewing the UI depending on your settings, so careful with that)
 
 
-## Command Line Usage :
+## Training & logging from a python file :
 
-On the command line we give to the program values for maxIter and regParam parameters :
+On the command line we can give to the program values for maxIter and regParam parameters :
 
 ```
-python3 movie-lens-mlflow-model.py 2 0.005
+spark-submit movie-lens-mlflow-model.py 2 0.005
 ```
 
-
+This is a manual process, for demo, but it can of course be generalized and looped/automated
 
 
 
@@ -99,7 +99,7 @@ Before running the command below :
 mlflow models serve -m /mlruns/0/6c8050941d0744b8ac3652ff22d40983/artifacts/ALSmodel_Lite2 --port 9999 --no-conda
 ```
 
-Once you have started the server, you can pass it some sample data and see the predictions.
+Once you have started the server, you can pass some sample data to it, and see the predictions.
 
 The following example uses curl to send a JSON-serialized pandas DataFrame with the split orientation to the model server.
 ```
