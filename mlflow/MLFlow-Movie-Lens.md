@@ -3,13 +3,20 @@
 #### Install MLFlow :
 
 ```
+sudo su 
+```
+
+```
 pip3 install mlflow
 ```
+
 ```
 mkdir /mlruns
 cp -r /root/mlruns/* /mlruns
 chmod -R 777 /mlruns
+mkdir /mlruns/0
 ```
+
 #### Viewing the Tracking UI 
 
 ```
