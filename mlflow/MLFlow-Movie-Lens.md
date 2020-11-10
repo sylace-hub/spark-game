@@ -54,6 +54,16 @@ Many models can be served as Python functions, so an MLmodel file can declare ho
     
 ```
 
+The run saves a model folder containing an MLmodel description file and a pickled model.
+
+```
+ll ./mlruns/0/7de69dabe1254ed09e681b33143ba05e/artifacts/model
+total 12
+-rw-rw-r-- 1 hbachkou hbachkou 150 Nov  2 16:37 conda.yaml
+-rw-rw-r-- 1 hbachkou hbachkou 349 Nov  2 16:37 MLmodel
+-rw-rw-r-- 1 hbachkou hbachkou 717 Nov  2 16:37 model.pkl
+```
+
 ## Use the tracking UI for monitoring :
 
 ```
@@ -73,15 +83,7 @@ On the command line we give to the program values for maxIter and regParam param
 python3 movie-lens-mlflow-model.py 2 0.005
 ```
 
-The run saved a model folder containing an MLmodel description file and a pickled model.
 
-```
-ll ./mlruns/0/7de69dabe1254ed09e681b33143ba05e/artifacts/model
-total 12
--rw-rw-r-- 1 hbachkou hbachkou 150 Nov  2 16:37 conda.yaml
--rw-rw-r-- 1 hbachkou hbachkou 349 Nov  2 16:37 MLmodel
--rw-rw-r-- 1 hbachkou hbachkou 717 Nov  2 16:37 model.pkl
-```
 
 
 
