@@ -44,10 +44,15 @@ In this case, you must ensure that the necessary dependencies are already instal
 MLflow includes a generic MLmodel format for saving models from a variety of tools.  
 Many models can be served as Python functions, so an MLmodel file can declare how each model should be interpreted as a Python function in order to let various tools serve it.
 ```
+    mlflow.start_run()
+    
     mlflow.log_metric("rmse", rmse)
     mlflow.spark.log_model(lr, "model")
 
     print("Model saved in run %s" % mlflow.active_run().info.run_uuid)
+    
+    mlflow.end_run()
+    
 ```
 On the command line we give to the program values for maxIter and regParam parameters :
 
@@ -70,6 +75,10 @@ total 12
 #### Serving Models :
 
 You can pass the run ID and the path of the model within the artifacts directory (here “model”) to various tools. For example, MLflow includes a simple REST server for python-based models:
+
+Before running the command below : 
+- change *ALSmodel_Lite2* with the name of *YOUR* model
+- change *6c8050941d0744b8ac3652ff22d40983* with the UUID of *YOUR* model
 
 ```
 mlflow models serve -m /mlruns/0/6c8050941d0744b8ac3652ff22d40983/artifacts/ALSmodel_Lite2 --port 9999 --no-conda
