@@ -56,7 +56,9 @@ Many models can be served as Python functions, so an MLmodel file can declare ho
 
 ## Use the tracking UI for monitoring :
 
+```
 mlflow ui --backend-store-uri /mlruns --host 0.0.0.0&
+```
 
 go to http://YOUR.IP.ADD.RESS:5000 :
 
