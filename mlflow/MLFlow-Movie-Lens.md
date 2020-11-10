@@ -64,7 +64,7 @@ total 12
 -rw-rw-r-- 1 hbachkou hbachkou 349 Nov  2 16:37 MLmodel
 -rw-rw-r-- 1 hbachkou hbachkou 717 Nov  2 16:37 model.pkl
 ```
-;)
+
 
 
 #### Serving Models :
