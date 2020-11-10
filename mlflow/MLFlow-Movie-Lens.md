@@ -10,17 +10,16 @@ sudo su
 pip3 install mlflow
 ```
 
+#### Initilize the Tracking UI 
+
 ```
-mkdir /mlruns
-cp -r /root/mlruns/* /mlruns
+mlflow ui --backend-store-uri /mlruns --host 0.0.0.0&
+```
+
+#### Open a new Terminal window
+
+```
 chmod -R 777 /mlruns
-mkdir /mlruns/0
-```
-
-#### Viewing the Tracking UI 
-
-```
-mlflow ui --host 0.0.0.0&
 ```
 
 go to http://YOUR.IP.ADD.RESS:5000 :
