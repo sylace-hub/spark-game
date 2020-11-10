@@ -10,19 +10,18 @@ sudo su
 pip3 install mlflow
 ```
 
-#### Initilize the Tracking UI 
+#### Initialize the MLRun DB  
 
 ```
 mlflow ui --backend-store-uri /mlruns --host 0.0.0.0&
-```
 
-#### Open a new Terminal window
+Hit Ctrl-C to quit
+```
 
 ```
 chmod -R 777 /mlruns
 ```
 
-go to http://YOUR.IP.ADD.RESS:5000 :
 
 #### Run MLflow projects :
 
@@ -54,6 +53,18 @@ Many models can be served as Python functions, so an MLmodel file can declare ho
     mlflow.end_run()
     
 ```
+
+## Use the tracking UI for monitoring :
+
+mlflow ui --backend-store-uri /mlruns --host 0.0.0.0&
+
+go to http://YOUR.IP.ADD.RESS:5000 :
+
+(Locking might occur while logging your model and viewing the UI depending on your settings, so careful with that)
+
+
+## Command Line Usage :
+
 On the command line we give to the program values for maxIter and regParam parameters :
 
 ```
@@ -96,7 +107,7 @@ The rest service takes pandas-split format based on json, to get a file with thi
 ```
 # python
 	
-serveDf.toPandas().head(100).to_json('~/data.json', orient='split')
+serveDF.toPandas().head(100).to_json('~/data.json', orient='split')
 ```
 
 ```
