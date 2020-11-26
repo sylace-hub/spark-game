@@ -46,7 +46,7 @@ $ spark-submit server.py ml-latest/movies.csv ml-latest/ratings.csv
 
 Can be accessed on : http://localhost:5432
 
-### The application deploys three rest services :
+### Three rest services :
 
 #### Getting Top Recommendations :
 
