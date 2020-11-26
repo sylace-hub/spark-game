@@ -7,12 +7,45 @@ from pyspark.ml.evaluation import RegressionEvaluator
 
 from pyspark.sql import SQLContext
 
+import random
+
 class RecommendationEngine:
+
+    """
+        Create new User.
+    """
+    def create_user(self, user_id):
+        if user_id == None:
+            self.max_user_identifier = self.max_user_identifier + 1
+        elif user_id > self.max_user_identifier:
+            self.max_user_identifier = user_id
+        return self.max_user_identifier
+
+    """
+        Check is a user known.
+    """
+    def is_user_known(self, user_id):
+        return user_id != None and user_id <= self.max_user_identifier
+
+    """
+        Get a movie.
+    """
+    def get_movie(self, movie_id):
+        if movie_id == None:
+            return self.most_rated_movies.sample(False, fraction=0.05).select("movieId", "title").limit(1)
+        else:
+            return self.movies_df.filter("movieId == " + str(movie_id))
+
+    """
+        Get ratings for user.
+    """
+    def get_ratings_for_user(self, user_id):
+        return self.ratings_df.filter("userId == " + str(user_id))
 
     """
         Adds new ratings to the model dataset and train the model again.
     """
-    def add_ratings(self, ratings):
+    def add_ratings(self, user_id, ratings):
         rating_struct = [StructField("movieId", IntegerType(), True),
             StructField("userId", IntegerType(), True),
             StructField("rating", DoubleType(), True)]
@@ -22,6 +55,9 @@ class RecommendationEngine:
 
         new_ratings_df = self.spark.createDataFrame(ratings_list, StructType(rating_struct))
         self.ratings_df = self.ratings_df.union(new_ratings_df)
+
+        # Splitting training data
+        self.training, self.test = self.ratings_df.randomSplit([0.8, 0.2], seed=12345)
         self.__train_model()
 
     """
@@ -54,8 +90,8 @@ class RecommendationEngine:
         Train the model with ALS.
     """
     def __train_model(self):
-        als = ALS(maxIter=self.maxIter,
-                  regParam=self.regParam, \
+        als = ALS(maxIter=self.max_iter,
+                  regParam=self.reg_param, \
                   implicitPrefs=False, \
                   userCol="userId", \
                   itemCol="movieId", \
@@ -71,7 +107,6 @@ class RecommendationEngine:
     def __evaluate(self):
         predictions = self.model.transform(self.test)
         evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating", predictionCol="prediction")
-
         self.rmse = evaluator.evaluate(predictions)
         print("Root-mean-square error = " + str(self.rmse))
 
@@ -82,10 +117,10 @@ class RecommendationEngine:
         self.spark = SQLContext(sc).sparkSession
         
         # Get hyper parameters from command line
-        self.maxIter = 9
-        self.regParam = 0.05
+        self.max_iter = 9
+        self.reg_param = 0.05
 
-        print("MaxIter {}, RegParam {}.".format(self.maxIter, self.regParam))
+        print("MaxIter {}, RegParam {}.".format(self.max_iter, self.reg_param))
 
         # Define schema for movies dataset
         movies_struct = [StructField("movieId", IntegerType(), True),
@@ -109,6 +144,9 @@ class RecommendationEngine:
             .schema(movies_schema) \
             .load(movies_set_path)
 
+        self.movies_count = self.movies_df.count()
+        print("Number of movies : {}.".format(self.movies_count))
+
         # Read ratings from HDFS
         self.ratings_df = self.spark.read.format("csv") \
             .option("header", "true") \
@@ -116,6 +154,14 @@ class RecommendationEngine:
             .schema(ratings_schema) \
             .load(ratings_set_path) \
             .drop("timestamp")
+
+        self.max_user_identifier = self.ratings_df.select('userId').distinct().sort(col("userId").desc()).limit(1).take(1)[0].userId
+        print("Max user id : {}.".format(self.max_user_identifier))
+
+        self.most_rated_movies = self.movies_df \
+            .join(self.ratings_df, "movieId") \
+            .groupBy(col("movieId"), col("title")).count().orderBy("count", ascending=False) \
+            .limit(100)
 
         # Splitting training data
         self.training, self.test = self.ratings_df.randomSplit([0.8, 0.2], seed=12345)

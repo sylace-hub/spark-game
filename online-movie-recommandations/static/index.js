@@ -1,34 +1,60 @@
+var host = "http://localhost:5432/"
+
 function addRating() {
-    var tableBody = document.getElementById("ratings-table-body");
+    console.log("Get random movie to rate...");
 
-    var index = tableBody.getElementsByTagName('tr').length;
-    var row = tableBody.insertRow(index);
-    row.setAttribute("id", index);
+    var xmlhttp = new XMLHttpRequest();
+    var url = host + "movies";
 
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                var movie = this.response[0];
 
-    var input = document.createElement("input");
-    input.setAttribute("type", "text");
-    input.setAttribute("class", "form-control");
-    input.setAttribute("placeholder", "Movie Identifier");
-    input.setAttribute("name", "movieId_" + index);
+                var tableBody = document.getElementById("ratings-table-body");
 
-    var select = document.createElement("select");
-    select.setAttribute("class", "form-control")
-    select.setAttribute("name", "rating_" + index);
+                var index = tableBody.getElementsByTagName('tr').length;
+                var row = tableBody.insertRow(index);
+                row.setAttribute("id", index);
+            
+                var cell1 = row.insertCell(0);
+                var cell2 = row.insertCell(1);
+            
+                var titleInput = document.createElement("input");
+                titleInput.setAttribute("type", "text");
+                titleInput.setAttribute("class", "form-control");
+                titleInput.setAttribute("placeholder", "Movie Identifier");
+                titleInput.setAttribute("name", "title_" + index);
+                titleInput.setAttribute("value", movie.title);
+            
+                var idInput = document.createElement("input");
+                idInput.setAttribute("type", "hidden");
+                idInput.setAttribute("name", "movieId_" + index);
+                idInput.setAttribute("value", movie.movieId);
 
-    var i;
-    for (i = 1; i <= 5; i++) {
-        var option = document.createElement("option");
-        option.setAttribute("value", i);
-        var node = document.createTextNode(i);
-        option.appendChild(node);
-        select.appendChild(option);
-    }
+                var select = document.createElement("select");
+                select.setAttribute("class", "form-control")
+                select.setAttribute("name", "rating_" + index);
+            
+                var i;
+                for (i = 1; i <= 5; i++) {
+                    var option = document.createElement("option");
+                    option.setAttribute("value", i);
+                    var node = document.createTextNode(i);
+                    option.appendChild(node);
+                    select.appendChild(option);
+                }
+            
+                cell1.appendChild(titleInput);
+                cell1.appendChild(idInput);
+                cell2.appendChild(select);
+            }
+        }
+    };
 
-    cell1.appendChild(input);
-    cell2.appendChild(select);
+    xmlhttp.open("GET", url, true);
+    xmlhttp.responseType = 'json';
+    xmlhttp.send();
 }
 
 function addMovieRecommendation(value, index, array) {
@@ -54,10 +80,13 @@ function isValidForm(firstParam, secondParam) {
 }
 
 function submitRatings(userId) {
-    if (userId === "" || isNaN(userId)) {
-        alert("User Identifier must be a numerical value.");
-    } else {
-        console.log("Add new ratings to the model for user " + userId);
+    console.log("Add new ratings to the model for user " + userId);
+
+    if (userId.trim() === "" || !isNaN(userId)) {
+        var url = host + "newratings";
+        if (userId.trim() !== "") {
+            url = host + "newratings/" + userId.trim();
+        }
 
         document.getElementById("add-ratings-btn").disabled = true;
         document.getElementById("add-rating-line-btn").disabled = true;
@@ -66,8 +95,6 @@ function submitRatings(userId) {
         var data = new FormData(ratingsForm);
 
         var xhr = new XMLHttpRequest();
-        var url = "http://localhost:5432/" + userId + "/newratings";
-        xhr.open("POST", url, true);
         xhr.onload = function () {
             if (this.readyState == 4) {
                 if (this.status == 200) {
@@ -75,8 +102,12 @@ function submitRatings(userId) {
                     while (tableBody.hasChildNodes()) {
                         tableBody.removeChild(tableBody.firstChild);
                     }
+                    if (this.responseText) {
+                    alert("Model trained successfully with new ratings.\nNew user created with identifier : " + this.responseText);
+                    } else {
+                        alert("Model trained successfully with new ratings.");
+                    }
                     addRating();
-                    alert(this.responseText);
                 }
 
                 if (this.status == 500) {
@@ -87,7 +118,11 @@ function submitRatings(userId) {
                 document.getElementById("add-rating-line-btn").disabled = false;
             }
         };
+
+        xhr.open("POST", url, true);
         xhr.send(data);
+    } else {
+        alert("User identifier must be numerical or empty to create new User.");
     }
 }
 
@@ -99,7 +134,7 @@ function predictRating(userId, movieId) {
         document.getElementById("predited-rating-result").innerHTML = "Processing...";
 
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://localhost:5432/" + userId + "/ratings/" + movieId;
+        var url = host + userId + "/ratings/" + movieId;
 
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4) {
@@ -107,7 +142,8 @@ function predictRating(userId, movieId) {
                     var rating = parseFloat(this.response).toFixed(2);
                     var message = "The prediction failed, movie not found for the given identifier."
                     if (rating != -1) {
-                        message = "Predicted rating for<br> movie " + movieId + " and user " + userId + " is :<br>" + rating;
+                        message = "Predicted rating for movie <br>" + document.getElementById('movieTitlePredictInput').value 
+                            + " <br>and user " + userId + " is :<br>" + rating;
                     }
                     document.getElementById("predited-rating-result").innerHTML = message;
                 }
@@ -130,7 +166,7 @@ function getRecommendations(userId, nbMovies) {
         document.getElementById("get-recommendations-btn").disabled = true;
 
         var xmlhttp = new XMLHttpRequest();
-        var url = "http://localhost:5432/" + userId + "/ratings/top/" + nbMovies;
+        var url = host + userId + "/ratings/top/" + nbMovies;
 
         xmlhttp.onreadystatechange = function() {
             if (this.readyState == 4) {
@@ -153,5 +189,31 @@ function getRecommendations(userId, nbMovies) {
         xmlhttp.send();
     } else {
         alert("User Identifier and Number of movies must be numerical values.");
+    }
+}
+
+function getMovie(movieId) {
+    if (movieId === "" || isNaN(movieId)) {
+        console.log("Movie Identifier is null.");
+    } else {
+        var xmlhttp = new XMLHttpRequest();
+        var url = host + "movies/" + movieId;
+
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    var input = document.getElementById('movieTitlePredictInput');
+                    if (this.response == undefined || this.response.length == 0) {
+                        input.value = "Movie not found";
+                    } else {
+                        input.value = this.response[0].title;
+                    }
+                }
+            }
+        };
+
+        xmlhttp.open("GET", url, true);
+        xmlhttp.responseType = 'json';
+        xmlhttp.send();
     }
 }
