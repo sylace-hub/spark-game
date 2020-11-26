@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 main = Blueprint('main', __name__)
  
 import json
@@ -14,6 +14,29 @@ from engine import RecommendationEngine
 
 from flask import Flask, request
 
+# defining a route
+@main.route("/", methods=['GET', 'POST', 'PUT']) # decorator
+def home(): # route handler function
+    # returning a response
+    # return "Hello World!"
+    return render_template('index.html')
+
+@main.route("/<int:user_id>/newratings", methods = ["POST"])
+def new_ratings(user_id):
+    print("User {} adds more ratings for movies.".format(user_id))
+
+    form_as_list = list(request.form.items())
+    ratings_list = []
+    i = 0
+    while i < len(form_as_list) - 1:
+        if len(form_as_list[i][1].strip()) > 0:
+            ratings_list.append((form_as_list[i][1] , form_as_list[i + 1][1]))
+        i += 2
+
+    ratings = map(lambda x: (user_id, int(x[0]), float(x[1])), ratings_list)
+    recommendation_engine.add_ratings(ratings)
+    return "The prediction model has been recomputed for the new user ratings.\n"
+
 @main.route("/<int:user_id>/ratings", methods = ["POST"])
 def add_ratings(user_id):
     print("User {} adds more ratings for movies.".format(user_id))
@@ -22,17 +45,18 @@ def add_ratings(user_id):
     data = uploaded_file.read()
     ratings_list = data.decode("utf-8").strip().split("\n")
     ratings_list = map(lambda x: x.split(","), ratings_list)
+
     ratings = map(lambda x: (user_id, int(x[0]), float(x[1])), ratings_list)
     recommendation_engine.add_ratings(ratings)
+    return "The prediction model has been recomputed for the new user ratings."
 
-    return "The prediction model has been recomputed for the new user ratings.\n"
 
 @main.route("/<int:user_id>/ratings/<int:movie_id>", methods=["GET"])
 def movie_ratings(user_id, movie_id):
-    print("User %s rating requested for movie %s", user_id, movie_id)
+    print("User %s rating requested for movie %s" % (user_id, movie_id))
 
     rating = recommendation_engine.predict_rating(int(user_id), int(movie_id))
-    return str(rating) + "\n"
+    return str(rating)
 
 @main.route("/<int:user_id>/ratings/top/<int:count>", methods=["GET"])
 def top_ratings(user_id, count):
@@ -45,4 +69,6 @@ def create_app(spark_context, movies_set_path, ratings_set_path):
 	recommendation_engine = RecommendationEngine(spark_context, movies_set_path, ratings_set_path)
 	app = Flask(__name__)
 	app.register_blueprint(main)
+	app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+	app.config['TEMPLATES_AUTO_RELOAD'] = True
 	return app

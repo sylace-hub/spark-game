@@ -35,6 +35,8 @@ class RecommendationEngine:
         rating_df = self.spark.createDataFrame(data, StructType(rating_struct))
 
         prediciton_df = self.model.transform(rating_df)
+        if (prediciton_df.count() == 0):
+            return -1
         return prediciton_df.collect()[0].asDict()["prediction"]
 
     """
