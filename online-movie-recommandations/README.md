@@ -40,24 +40,29 @@ To run the server :
 ```console
 $ spark-submit server.py ml-latest/movies.csv ml-latest/ratings.csv
 ```
+## The application deploys :
 
-## The application deploys three rest services :
+### A web page :
 
-### Getting Top Recommendations :
+Can be accessed on : http://localhost:5432
+
+### Three rest services :
+
+#### Getting Top Recommendations :
 
 Here we call the service to get the top 10 recommendations for the user 331 :
 ```console
 curl -H "Accept: application/json; Content-Type: application/json" -X GET http://localhost:5432/331/ratings/top/10 | python -m json.tool
 ```
 
-### Getting Individual Ratings :
+#### Getting Individual Ratings :
 
 Here we call the to get the predicted rating for the movie The Quiz (1994) for the user 12 :
 ```console
 curl -H "Content-Type: application/json" -X GET http://localhost:5432/12/ratings/858
 ```
 
-### Adding New Ratings
+#### Adding New Ratings
 
 Add new ratings for a specific user and recompute the prediction model for every new batch of user ratings.
 Here we call the service for the user 331 :
