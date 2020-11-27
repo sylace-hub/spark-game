@@ -15,13 +15,13 @@ from engine import RecommendationEngine
 from flask import Flask, request
 
 # defining a route
-@main.route("/", methods=['GET', 'POST', 'PUT']) # decorator
+@main.route("/", methods=["GET", "POST", "PUT"]) # decorator
 def home(): # route handler function
     # returning a response
     # return "Hello World!"
-    return render_template('index.html')
+    return render_template("index.html")
 
-@main.route('/movies', defaults={'movie_id': None})
+@main.route("/movies", defaults = { "movie_id": None })
 @main.route("/movies/<int:movie_id>", methods=["GET"])
 def get_movie(movie_id):
     print("Get a movie %s" % (movie_id))
@@ -29,7 +29,7 @@ def get_movie(movie_id):
     movie = recommendation_engine.get_movie(movie_id)
     return movie.toPandas().to_json(orient="records")
 
-@main.route('/newratings', defaults={'user_id': None}, methods = ["POST"])
+@main.route("/newratings", defaults = { "user_id": None }, methods = ["POST"])
 @main.route("/newratings/<int:user_id>", methods = ["POST"])
 def new_ratings(user_id):
     print("User {} adds more ratings for movies.".format(user_id))
@@ -58,7 +58,7 @@ def new_ratings(user_id):
 def add_ratings(user_id):
     print("User {} adds more ratings for movies.".format(user_id))
 
-    uploaded_file = request.files['file']
+    uploaded_file = request.files["file"]
     data = uploaded_file.read()
     ratings_list = data.decode("utf-8").strip().split("\n")
     ratings_list = map(lambda x: x.split(","), ratings_list)

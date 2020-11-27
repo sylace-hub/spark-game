@@ -1,4 +1,3 @@
-# Pyspark
 from pyspark.sql.types import *
 from pyspark.sql.functions import explode, col
 
@@ -32,7 +31,11 @@ class RecommendationEngine:
     """
     def get_movie(self, movie_id):
         if movie_id == None:
-            return self.most_rated_movies.sample(False, fraction=0.05).select("movieId", "title").limit(1)
+            best_movies_struct = [StructField("movieId", IntegerType(), True),
+		        StructField("title", StringType(), True),
+		        StructField("count", IntegerType(), True)]
+            best_movies_df = self.spark.createDataFrame(self.most_rated_movies, StructType(best_movies_struct))
+            return best_movies_df.sample(False, fraction=0.05).select("movieId", "title").limit(1)
         else:
             return self.movies_df.filter("movieId == " + str(movie_id))
 
@@ -161,7 +164,7 @@ class RecommendationEngine:
         self.most_rated_movies = self.movies_df \
             .join(self.ratings_df, "movieId") \
             .groupBy(col("movieId"), col("title")).count().orderBy("count", ascending=False) \
-            .limit(100)
+            .limit(200).collect()
 
         # Splitting training data
         self.training, self.test = self.ratings_df.randomSplit([0.8, 0.2], seed=12345)
