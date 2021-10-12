@@ -1,9 +1,24 @@
 ### Online recommendation service Using Pyspark & MLlib
 
+Download application source code from the following URL :<br/>
+TODO
+
+Copy the downloaded archive to your EMR instance :
+```console
+scp -i ./KEY.pem online-movie-recommandations.zip ec2-user@ec2-34-224-80-140.compute-1.amazonaws.com:/home/ec2-user
+```
+
+
+
 #### Prereqs :
 
 ```console
 sudo su
+```
+
+Update the OS :
+```
+yum update
 ```
 
 The CherryPy framework features a reliable, HTTP/1.1-compliant, WSGI thread-pooled webserver.
@@ -16,8 +31,9 @@ Flask is a micro web framework written in Python.
 pip3 install Flask
 ```
 
-pandas is a data manipulation and analysis library
+pandas is a data manipulation and analysis library (Cython is necessary for pandas installation).
 ```console
+pip3 install Cython
 pip3 install pandas
 ```
 
@@ -35,6 +51,11 @@ hdfs dfs -put ml-latest /user/root/ml-latest
 * ***engine.py*** defines the recommendation engine, wrapping inside all the Spark related computations.
 * ***app.py*** is a Flask web application that defines a RESTful API around the engine.
 * ***server.py*** initialises a CherryPy webserver after creating a Spark context and Flask web app.
+
+Update line 1 of ./static/index.js and put the address of your AWS master machine instead of localhost :
+```
+var host = "http://ec2-XX-XX-XX-XX.compute-1.amazonaws.com:5432/"
+```
 
 To run the server :
 ```console
